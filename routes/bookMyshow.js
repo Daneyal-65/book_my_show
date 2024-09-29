@@ -18,9 +18,14 @@ Router.get("/booking", async (req, res) => {
   }
 });
 // // API for adding booking (POST)
+// Router.delete("/booking", async (req, res) => {
+//   data = await BookMovie.find({});
+//   result = await BookMovie.deleteMany({});
+//   res.send({ result, data });
+// });
 Router.post("/booking", async (req, res) => {
   const { movie, seats, slot } = req.body;
-
+  console.log(req.body);
   // Validate the request body
   if (!movie || !seats || !slot) {
     return res.status(400).json({ message: "Invalid request body" });
@@ -28,11 +33,11 @@ Router.post("/booking", async (req, res) => {
   try {
     const result = await BookMovie.findOneAndUpdate(
       {}, // empty filter to update the first document or create a new one if none exists
-      { movie, seats, slot },
+      { userId: req.user._id, movie, seats, slot },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
     // console.log(result);
-    res.status(200).json({ message: "Booking successful" });
+    res.status(200).json({ message: "Booking successful", ...result });
   } catch (ex) {
     res.status(500).json({ message: "Internal server error" });
     console.error(ex);
