@@ -7,7 +7,8 @@ const { Schema, model } = mongoose;
 
 let mongoServer;
 let app;
-
+// define the mongoose module and its dependencies here
+// schema ,router , and API'S 
 const bookMovieSchema = new Schema({
   movie: String,
   slot: String,
@@ -22,7 +23,7 @@ const bookMovieSchema = new Schema({
 });
 
 const BookMovie = model("BookMovie", bookMovieSchema);
-
+// mock the server , db and connection
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
@@ -33,7 +34,7 @@ beforeAll(async () => {
 
   app = express();
   app.use(bodyParser.json());
-
+// defination of api calls get and post 
   app.post("/api/booking", async (req, res) => {
     const { movie, seats, slot } = req.body;
     if (!movie || !seats || !slot) {
@@ -65,17 +66,18 @@ beforeAll(async () => {
       console.error(ex);
     }
   });
-
+// middleware 
   app.use((req, res) => {
     res.status(404).json({ message: "Invalid endpoint" });
   });
 });
 
+// after server and db connections must be stopped
 afterAll(async () => {
   await mongoose.disconnect();
   await mongoServer.stop();
 });
-
+// here the test cases 
 describe("Booking API", () => {
   beforeEach(async () => {
     await BookMovie.deleteMany({});

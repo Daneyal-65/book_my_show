@@ -1,5 +1,7 @@
+
+// import all modules for setting up jwt authentication 
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs"); //for Hashing password
 const User = require("../model/user.js");
 const express = require("express");
 

@@ -1,12 +1,14 @@
-// routes/bookMyshow.js
+// import all the required dependencies from the module 
 const express = require("express");
 const { BookMovie } = require("../database/connector.cjs");
-
+// define router using express router
 const Router = express.Router();
 // API for get all the movies
 Router.get("/booking", async (req, res) => {
   try {
-    const lastBooking = await BookMovie.findOne().sort({ _id: -1 }); // for gettig last booking
+    // find the last booking in the collection
+    // sort the last booking by _id in descending order 
+    const lastBooking = await BookMovie.findOne().sort({ _id: -1 }); 
     if (lastBooking) {
       res.status(200).json(lastBooking);
     } else {
@@ -17,12 +19,7 @@ Router.get("/booking", async (req, res) => {
     console.error(ex);
   }
 });
-// // API for adding booking (POST)
-// Router.delete("/booking", async (req, res) => {
-//   data = await BookMovie.find({});
-//   result = await BookMovie.deleteMany({});
-//   res.send({ result, data });
-// });
+// api for post request 
 Router.post("/booking", async (req, res) => {
   const { movie, seats, slot } = req.body;
   console.log(req.body);
