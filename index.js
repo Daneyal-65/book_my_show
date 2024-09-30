@@ -1,4 +1,4 @@
-// app.js
+// import all the dependencies
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
