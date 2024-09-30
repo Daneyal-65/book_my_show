@@ -1,12 +1,14 @@
-// routes/bookMyshow.js
+// import all the required dependencies from the module 
 const express = require("express");
 const { BookMovie } = require("../database/connector.cjs");
-
+// define router using express router
 const Router = express.Router();
 // API for get all the movies
 Router.get("/booking", async (req, res) => {
   try {
-    const lastBooking = await BookMovie.findOne().sort({ _id: -1 }); // for gettig last booking
+    // find the last booking in the collection
+    // sort the last booking by _id in descending order 
+    const lastBooking = await BookMovie.findOne().sort({ _id: -1 }); 
     if (lastBooking) {
       res.status(200).json(lastBooking);
     } else {
@@ -17,10 +19,10 @@ Router.get("/booking", async (req, res) => {
     console.error(ex);
   }
 });
-// // API for adding booking (POST)
+// api for post request 
 Router.post("/booking", async (req, res) => {
   const { movie, seats, slot } = req.body;
-
+  console.log(req.body);
   // Validate the request body
   if (!movie || !seats || !slot) {
     return res.status(400).json({ message: "Invalid request body" });
@@ -28,11 +30,11 @@ Router.post("/booking", async (req, res) => {
   try {
     const result = await BookMovie.findOneAndUpdate(
       {}, // empty filter to update the first document or create a new one if none exists
-      { movie, seats, slot },
+      { userId: req.user._id, movie, seats, slot },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
     // console.log(result);
-    res.status(200).json({ message: "Booking successful" });
+    res.status(200).json({ message: "Booking successful", ...result });
   } catch (ex) {
     res.status(500).json({ message: "Internal server error" });
     console.error(ex);

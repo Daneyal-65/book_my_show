@@ -1,6 +1,7 @@
 const { Schema } = require("mongoose");
-
+// movie booking schema
 const bookMovieSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User" },
   movie: Schema.Types.String,
   slot: Schema.Types.String,
   seats: {
