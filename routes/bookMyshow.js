@@ -1,14 +1,15 @@
-// import all the required dependencies from the module 
+// import all the required dependencies from the module
 const express = require("express");
 const { BookMovie } = require("../database/connector.cjs");
 // define router using express router
 const Router = express.Router();
 // API for get all the movies
 Router.get("/booking", async (req, res) => {
+  console.log(req.user);
   try {
     // find the last booking in the collection
-    // sort the last booking by _id in descending order 
-    const lastBooking = await BookMovie.findOne().sort({ _id: -1 }); 
+    // sort the last booking by _id in descending order
+    const lastBooking = await BookMovie.findOne().sort({ _id: -1 });
     if (lastBooking) {
       res.status(200).json(lastBooking);
     } else {
@@ -19,12 +20,12 @@ Router.get("/booking", async (req, res) => {
     console.error(ex);
   }
 });
-// api for post request 
+// api for post request
 Router.post("/booking", async (req, res) => {
   const { movie, seats, slot } = req.body;
-  console.log(req.body);
+  console.log(req.user);
   // Validate the request body
-  if (!movie || !seats || !slot) {
+  if (!movie || !seats || !slot || !req.user) {
     return res.status(400).json({ message: "Invalid request body" });
   }
   try {

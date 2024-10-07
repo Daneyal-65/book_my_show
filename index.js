@@ -1,8 +1,7 @@
-const express = require('express')
+const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const cors = require("cors");
-const Router = require("./routes/bookMyshow");
 const bookingApiRouter = require("./routes/bookMyshow");
 const authRouter = require("./auth/auth.js");
 const authenticateToken = require("./middleware/index.js");
@@ -10,9 +9,8 @@ const { BookMovie } = require("./database/connector.cjs");
 const port = 8080;
 
 app.use(cors());
-
+app.use(express.json());
 // Routes
-app.use("/api", Router);
 app.use("/auth", authRouter);
 app.use("/api", authenticateToken, bookingApiRouter);
 

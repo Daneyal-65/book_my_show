@@ -1,4 +1,4 @@
-// import all modules for setting up jwt authentication 
+// import all modules for setting up jwt authentication
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); //for Hashing password
 const User = require("../model/user.js");
@@ -15,12 +15,20 @@ Router.post("/signup", async (req, res) => {
     // Hash password
     // console.log(username, password);
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       {}, // empty filter to update the first document or create a new one if none exists
       { username, password: hashedPassword },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
-    res.status(201).json({ message: "User created successfully", ...req.body });
+    // jwt authentication
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+    res.status(201).json({ message: "User created successfully", token });
   } catch (error) {
     res.status(500).json({ message: "Error creating user" });
     console.log(error);
@@ -29,6 +37,11 @@ Router.post("/signup", async (req, res) => {
 // Route: Login
 Router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    return res
+      .status(400)
+      .json({ message: "Username and password are required" });
+  }
   try {
     const user = await User.findOne({ username });
     if (!user) return res.status(404).json({ message: "User not found" });
